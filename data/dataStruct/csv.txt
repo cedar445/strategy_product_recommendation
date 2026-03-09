@@ -1,0 +1,9 @@
+| 字段        | 含义             |
+| --------- | -------------- |
+| src       | product 节点 id  |
+| dst       | strategy 节点 id |
+| timestamp | week_index     |
+| sales     | 销售额            |
+| discount  | 折扣             |
+| inv_qty   | 库存             |
+| label     | 1（正样本）         |

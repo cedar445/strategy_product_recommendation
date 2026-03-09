@@ -1,0 +1,21 @@
+node.Weather {
+  color: #e9c600;
+  size: 25px;
+  caption: "{name}";
+}
+
+node.Product {
+  color: #e4a8ff;
+  size: 25px;
+  caption: "{name}";
+}
+
+node.Store {
+  color: #89a7ff;
+  size: 25px;
+  caption: "{name}";
+}
+
+relationship.SOLD_IN {
+  width: 1px;
+}

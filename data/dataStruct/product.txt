@@ -1,0 +1,73 @@
+// ----- product ----- //
+message schema {
+
+  optional binary tenant (STRING);                 // 租户ID（多品牌/多公司环境标识）
+  optional int64 stats_date (TIMESTAMP);           // 统计日期（数据生成时间）
+  optional int64 fiscal_period;                    // 财务周期（财年周/财年期）
+  optional int64 store_id;                         // 门店ID
+
+  optional binary product_id (STRING);             // 商品唯一ID（SKU级）
+  optional binary prod_type (STRING);              // 商品类型（如服装/鞋类）
+  optional binary prod_name (STRING);              // 商品名称
+  optional binary prod_brand (STRING);             // 品牌
+  optional binary prod_division (STRING);          // 产品线/事业部
+  optional binary prod_catagory (STRING);          // 商品大类
+  optional binary prod_theme (STRING);             // 主题/系列
+  optional binary gender (STRING);                 // 性别（男/女/中性）
+  optional binary launch_date (STRING);            // 上市日期
+
+  optional double sales_amt_actual;                // 实际销售金额（折后）
+  optional double sales_amt_actual_pct;            // 销售占比（门店或区域内）
+  optional double sales_qty;                       // 销售数量
+  optional double sales_amt_list;                  // 吊牌价销售额（原价）
+  optional double discount_rate;                   // 折扣率
+
+  optional double sales_amt_actual_store_rank;     // 门店内销售额排名
+  optional double sales_amt_actual_area_rank;      // 区域内销售额排名
+  optional double div_gender_sales_store_rank;     // 品类+性别门店排名
+  optional double div_gender_sales_area_rank;      // 品类+性别区域排名
+
+  optional double recent_sale_speed;               // 近期动销速度（销售节奏）
+  optional binary sales_classify_tag (STRING);     // 销售分类标签（如爆款/滞销）
+
+  optional double total_retail_cnt;                // 累计销售笔数
+  optional double total_retail_amt_actual;         // 累计销售额（实际）
+  optional double total_retail_amt_list;           // 累计销售额（吊牌价）
+  optional double total_retail_qty_for_upt;        // 用于计算UPT的销售数量
+
+  optional double inv_amt;                         // 当前库存金额
+  optional double inv_amt_store_rank;              // 门店库存金额排名
+  optional double inv_qty;                         // 当前库存数量
+
+  optional double standard_gold_size_cnt;          // 标准黄金尺码数量
+  optional double gold_full_size_rate;             // 黄金尺码齐码率
+  optional double golden_size_sales_qty;           // 黄金尺码销售数量
+  optional double golden_size_sales_amt_actual;    // 黄金尺码销售金额
+
+  optional int64 is_in_short;                      // 是否断码（1=断码）
+  optional int64 is_add;                           // 是否新品（1=新增）
+  optional int64 is_in_season;                     // 是否当季商品
+  optional binary season_type (STRING);            // 季节类型（春夏秋冬）
+  optional binary prod_season (STRING);            // 商品所属季节
+
+  optional double sales_qty_90d;                   // 近90天销量
+  optional double prod_list_price;                 // 吊牌价
+  optional double dynamic_sale_store_rate;         // 门店动销率
+
+  optional double channel_sales_amt_actual;        // 渠道销售额
+  optional double channel_sales_amt_actual_rank;   // 渠道销售额排名
+
+  optional double life_cycle_stage;                // 生命周期阶段（数值编码）
+
+  optional binary arrival_date (STRING);           // 到货日期
+  optional double singular_retail_cnt;             // 单件销售笔数
+  optional int64 sales_sku_cnt;                    // 销售SKU数
+
+  optional double inv_sale_rate_num;               // 库销比（分子）
+  optional double inv_sale_rate_den;               // 库销比（分母）
+
+  optional double sales_amt_actual_90d;            // 90天销售额（实际）
+  optional double sales_amt_list_90d;              // 90天销售额（吊牌）
+
+  optional binary week_id (STRING);                // 周ID（如2025W01）
+}

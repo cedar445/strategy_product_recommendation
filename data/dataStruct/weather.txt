@@ -1,0 +1,20 @@
+// ----- weather ----- //
+message duckdb_schema {
+
+  optional binary cityid (STRING);          // 城市ID
+  optional binary reportday (STRING);       // 报告日期
+
+  optional binary 当天天气 (STRING);        // 当天整体天气
+  optional binary 当天白天天气 (STRING);    // 白天天气
+  optional binary 当天夜间天气 (STRING);    // 夜间天气
+
+  optional binary 当天温度 (STRING);        // 平均温度
+  optional binary 当天最高温 (STRING);      // 最高温
+  optional binary 当天最低温 (STRING);      // 最低温
+  optional binary 当天风速 (STRING);        // 风速
+  optional binary 当天空气 (STRING);        // 空气质量
+  optional binary 当天降雨 (STRING);        // 是否降雨
+  optional binary 当天日照 (STRING);        // 日照时长
+
+  // 后1~后6天 = 未来天气预测（滚动预测数据）
+}

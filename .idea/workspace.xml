@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2ef9abf2-be9b-47f1-be3d-e4c1e8a1efc7" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="39SXp6I1YwhfeLgyNEiwfUjGZWw" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.load.executor": "Run",
+    "Python.readData.executor": "Run",
+    "Python.readData2.executor": "Run",
+    "Python.tgnTrain.executor": "Run",
+    "Python.tmp.executor": "Run",
+    "Python.toCsv.executor": "Run",
+    "Python.toTgnCsv.executor": "Run",
+    "Python.train.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "E:/Projects/GraduationProject/strategy_product_recommendation/data/trainData/weeklyPart1",
+    "settings.editor.selected.configurable": "preferences.general"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Projects\GraduationProject\strategy_product_recommendation\data\trainData\weeklyPart1" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Projects\GraduationProject\strategy_product_recommendation\data\trainData\weeklyPart1\2025W52" />
+      <recent name="E:\Projects\GraduationProject\strategy_product_recommendation\data\weekly" />
+      <recent name="E:\Projects\GraduationProject\strategy_product_recommendation\data\trainData" />
+      <recent name="E:\Projects\GraduationProject\strategy_product_recommendation\data\dataStruct" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2ef9abf2-be9b-47f1-be3d-e4c1e8a1efc7" name="Changes" comment="" />
+      <created>1767451542721</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1767451542721</updated>
+    </task>
+    <servers />
+  </component>
+</project>
