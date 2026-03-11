@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ef9abf2-be9b-47f1-be3d-e4c1e8a1efc7" name="Changes" comment="" />
+    <list default="true" id="2ef9abf2-be9b-47f1-be3d-e4c1e8a1efc7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/readData.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/readData.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/toTgnCsv.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/toTgnCsv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/trainData/csv/tgnCsv/node_map.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/trainData/csv/tgnCsv/test.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/trainData/csv/tgnCsv/train.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/trainData/csv/tgnCsv/val.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/trainData/csv/tgnCsv/week_map.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/train/load.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/train/model/tgn_model.pth" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/train/tgnTrain.py" beforeDir="false" afterPath="$PROJECT_DIR$/train/tgnTrain.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +30,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 7
@@ -25,21 +41,22 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.load.executor": "Run",
-    "Python.readData.executor": "Run",
-    "Python.readData2.executor": "Run",
-    "Python.tgnTrain.executor": "Run",
-    "Python.tmp.executor": "Run",
-    "Python.toCsv.executor": "Run",
-    "Python.toTgnCsv.executor": "Run",
-    "Python.train.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "E:/Projects/GraduationProject/strategy_product_recommendation/data/trainData/weeklyPart1",
-    "settings.editor.selected.configurable": "preferences.general"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.load.executor&quot;: &quot;Run&quot;,
+    &quot;Python.readData.executor&quot;: &quot;Run&quot;,
+    &quot;Python.readData2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tgnTrain.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tmp.executor&quot;: &quot;Run&quot;,
+    &quot;Python.toCsv.executor&quot;: &quot;Run&quot;,
+    &quot;Python.toTgnCsv.executor&quot;: &quot;Run&quot;,
+    &quot;Python.train.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Projects/GraduationProject/strategy_product_recommendation/data/trainData/weeklyPart1&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Projects\GraduationProject\strategy_product_recommendation\data\trainData\weeklyPart1" />

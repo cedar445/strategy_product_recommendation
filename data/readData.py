@@ -11,7 +11,7 @@ from tqdm import tqdm
 NEO4J_URI = "bolt://localhost:7687"
 NEO4J_USER = "neo4j"
 NEO4J_PASSWORD = "156278Lsk"
-NEO4J_DATABASE = "weekly01"
+NEO4J_DATABASE = "weekly02"
 ROOT_DIR = "trainData/weeklyPart1"
 BATCH_SIZE = 2000
 
@@ -222,43 +222,66 @@ def import_product_parquet(file_path):
     // --- C. 批量执行连线 (二部图构建) ---
     UNWIND [c IN codes WHERE c IS NOT NULL] AS leaf_code
     MATCH (leaf:StrategyLeaf {code: leaf_code})
-    MERGE (pst)-[:STRATEGY_ASSIGNED]->(leaf)
+    MERGE (pst)-[:APPLY]->(leaf)
     """
 
     for i in tqdm(range(0, len(rows), BATCH_SIZE)):
         batch_write(query, rows[i:i+BATCH_SIZE])
 
 # ============================================================
-# Temporal Links
+# Temporal Links -- EFFECT OF
 # ============================================================
-
 def create_temporal_links():
+
+    query_clear = """
+    MATCH (n:PST:Processed)
+    REMOVE n:Processed
+    """
 
     query = """
     MATCH (pst1:PST)
     WHERE NOT pst1:Processed
-    WITH pst1 LIMIT 5000
+    WITH pst1 LIMIT 2000
+
     SET pst1:Processed
-    WITH pst1
+    WITH pst1  // <--- 这里是关键：添加这行以保持上下文
+
+    OPTIONAL MATCH (pst1)-[:APPLY]->(leaf:StrategyLeaf)
+    WITH pst1, collect(leaf.code) AS strategy_list
+
     MATCH (pst2:PST {
         tenant: pst1.tenant,
         product_id: pst1.product_id,
         store_id: pst1.store_id
     })
     WHERE pst2.week_index = pst1.week_index + 1
-       OR pst2.week_index =
-            (toInteger(floor(pst1.week_index/100))+1)*100+1
-    MERGE (pst1)-[:TEMPORAL_NEXT]->(pst2)
+       OR pst2.week_index = (toInteger(floor(pst1.week_index/100))+1)*100+1
+
+    MERGE (pst1)-[e:EFFECT_OF]->(pst2)
+    SET e.total_sales_lift = pst2.sales_qty - pst1.sales_qty,
+        e.total_amt_lift = pst2.sales_amt_actual - pst1.sales_amt_actual,
+        e.strategies = strategy_list,
+        e.strategy_count = size(strategy_list)
     """
 
     with driver.session(database=NEO4J_DATABASE) as session:
+
+        session.run(query_clear)
+
         while True:
             result = session.run(query)
             summary = result.consume()
-            if summary.counters.labels_added == 0:
-                session.run("MATCH (n:Processed) REMOVE n:Processed")
-                break
 
+            if summary.counters.relationships_created == 0:
+                remaining = session.run("""
+                MATCH (p:PST)
+                WHERE NOT p:Processed
+                RETURN count(p) AS c
+                """).single()["c"]
+
+                if remaining == 0:
+                    session.run("MATCH (n:PST:Processed) REMOVE n:Processed")
+                    break
 
 
 # ============================================================
@@ -284,6 +307,7 @@ def main():
 
     print("Creating temporal links...")
     create_temporal_links()
+
 
 
 

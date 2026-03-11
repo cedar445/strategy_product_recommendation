@@ -1,62 +1,91 @@
 import pandas as pd
-import torch.nn.functional as F
 import torch
-from torch.nn import MultiheadAttention, Linear, Sequential, ReLU, BatchNorm1d
+import os
+import torch.nn.functional as F
+from torch.nn import Linear, Sequential, ReLU, BatchNorm1d, MultiheadAttention
 from torch_geometric.data import TemporalData
 from torch_geometric.nn.models.tgn import (
     TGNMemory,
     IdentityMessage,
     LastAggregator,
-    LastNeighborLoader  # 你刚才发现它在这里！
+    LastNeighborLoader
 )
 
 # ================= CONFIG =================
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-DATA_PATH = "trainData/csv/tgnCsv/"
+# 建议此处使用绝对路径，避免找不到文件
+DATA_PATH = "../data/trainData/csv/tgnCsv"
 BATCH_SIZE = 200
-LR = 0.001
-EPOCHS = 50
+LR = 0.0005
+EPOCHS = 30
 
 
 # ================= 1. 加载数据 =================
 def load_data(file_name):
-    df = pd.read_csv(DATA_PATH + file_name)
-    # 提取 TGN 所需的张量
+    path = os.path.join(DATA_PATH, file_name)
+    if not os.path.exists(path):
+        print(f"警告：找不到文件 {path}")
+        return None
+
+    df = pd.read_csv(path)
+    if len(df) == 0:
+        return None
+
+    # 转换为 Tensor
     src = torch.tensor(df['u'].values, dtype=torch.long)
     dst = torch.tensor(df['i'].values, dtype=torch.long)
     t = torch.tensor(df['ts'].values, dtype=torch.long)
     msg = torch.tensor(df[['f1', 'f2', 'f3', 'f4']].values, dtype=torch.float)
     y = torch.tensor(df['label'].values, dtype=torch.long)
+
     return TemporalData(src=src, dst=dst, t=t, msg=msg, y=y)
 
 
-train_data = load_data("train.csv").to(DEVICE)
-val_data = load_data("val.csv").to(DEVICE)
-test_data = load_data("test.csv").to(DEVICE)
+# 预加载所有数据以计算全局参数
+train_data = load_data("train.csv")
+val_data = load_data("val.csv")
+test_data = load_data("test.csv")
 
-# 自动获取节点总数和类别总数
-num_nodes = max(train_data.src.max(), train_data.dst.max(),
-                val_data.src.max(), val_data.dst.max()) + 1
-num_classes = len(torch.unique(train_data.y))
+if train_data is None:
+    raise FileNotFoundError("无法加载训练数据，请检查路径和文件内容。")
+
+# --- 核心修复：计算全局最大节点 ID 和类别数，防止索引越界 ---
+all_src = [train_data.src]
+all_dst = [train_data.dst]
+all_y = [train_data.y]
+
+if val_data:
+    all_src.append(val_data.src)
+    all_dst.append(val_data.dst)
+    all_y.append(val_data.y)
+if test_data:
+    all_src.append(test_data.src)
+    all_dst.append(test_data.dst)
+    all_y.append(test_data.y)
+
+num_nodes = int(torch.cat(all_src + all_dst).max() + 1)
+num_classes = int(torch.cat(all_y).max() + 1)
+
+print(f"--- 初始化配置 ---")
+print(f"运行设备: {DEVICE}")
+print(f"全局节点总数 (num_nodes): {num_nodes}")
+print(f"预测类别总数 (num_classes): {num_classes}")
+print(f"------------------")
+
+# 将数据移至设备
+train_data = train_data.to(DEVICE)
 
 
-# ================= 2. 定义模型结构 =================
+# ================= 2. 定义模型 =================
 class TGNRecommender(torch.nn.Module):
     def __init__(self, num_nodes, msg_dim, memory_dim, time_dim, out_channels):
         super().__init__()
-
-        # 记忆模块
         self.memory = TGNMemory(
             num_nodes, msg_dim, memory_dim, time_dim,
             message_module=IdentityMessage(msg_dim, memory_dim, time_dim),
             aggregator_module=LastAggregator(),
         )
-
-        # 替代 TemporalAttentionAggregation：使用标准的多头注意力
-        # 注意：TGN 聚合后的维度依然是 memory_dim
-        self.mha = MultiheadAttention(embed_dim=memory_dim, num_heads=2, batch_first=True)
-
-        # 分类器
+        # 简单高效的分类头
         self.classifier = Sequential(
             Linear(memory_dim, 64),
             ReLU(),
@@ -65,89 +94,90 @@ class TGNRecommender(torch.nn.Module):
         )
 
     def forward(self, n_id):
-        # 获取当前节点的记忆嵌入
-        h, last_update = self.memory(n_id)
-
-        # 模拟聚合过程：在实际复杂场景中，这里会根据邻居进行注意力计算
-        # 这里我们直接将记忆送入分类器（这是 TGN 的基础版逻辑）
+        h, _ = self.memory(n_id)
         return self.classifier(h)
 
 
-# 初始化模型
 model = TGNRecommender(
-    num_nodes=int(num_nodes),
+    num_nodes=num_nodes,
     msg_dim=4,
-    memory_dim=64,
-    time_dim=32,
+    memory_dim=100,
+    time_dim=100,
     out_channels=num_classes
 ).to(DEVICE)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 criterion = torch.nn.CrossEntropyLoss()
+neighbor_loader = LastNeighborLoader(num_nodes, size=10)  # 保持在 CPU
 
-# 辅助工具：用于获取历史邻居
-# neighbor_loader = LastNeighborLoader(int(num_nodes), size=10).to(DEVICE)
-# 既然 LastNeighborLoader 在这里，就这样初始化：
-neighbor_loader = LastNeighborLoader(num_nodes, size=10)
 
-# ================= 3. 训练与测试函数 =================
+# ================= 3. 训练与评估逻辑 =================
 def train():
     model.train()
-    model.memory.reset_state()  # 每个 epoch 开始前重置记忆
+    model.memory.reset_state()
     neighbor_loader.reset_state()
 
     total_loss = 0
-    # TGN 必须按时间顺序分批
-    for batch in train_data.to_sequential_batches(BATCH_SIZE):
+    for i in range(0, train_data.num_events, BATCH_SIZE):
+        batch = train_data[i: i + BATCH_SIZE].to(DEVICE)
         optimizer.zero_grad()
 
-        # 更新记忆并获取当前嵌入
-        # n_id 包含了当前 batch 涉及的所有节点
+        # --- 核心修复：断开历史梯度链 ---
+        model.memory.detach()
+
         n_id = torch.cat([batch.src, batch.dst]).unique()
-        h, _ = model.memory(n_id)
+        out = model(n_id)
 
-        # 我们预测目标节点 (Product) 的策略
-        # 在 TGN 逻辑中，通常取 dst 节点的嵌入来做分类
-        out = model.classifier(h[batch.dst])
+        # 建立局部索引映射
+        node_to_idx = {node.item(): i for i, node in enumerate(n_id)}
+        batch_dst_idx = torch.tensor([node_to_idx[d.item()] for d in batch.dst], device=DEVICE)
 
-        loss = criterion(out, batch.y)
+        loss = criterion(out[batch_dst_idx], batch.y)
         loss.backward()
         optimizer.step()
 
-        # 关键：更新 Memory (基于当前 batch 的交互)
+        # 更新记忆与邻居（注意 .cpu() 转换）
         model.memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
-        neighbor_loader.insert(batch.src, batch.dst)
+        neighbor_loader.insert(batch.src.cpu(), batch.dst.cpu())
 
-        total_loss += float(loss) * batch.num_events
+        total_loss += loss.item() * batch.num_events
 
     return total_loss / train_data.num_events
 
 
 @torch.no_grad()
-def test(data):
+def evaluate(data):
+    if data is None: return 0.0
     model.eval()
-    # 注意：测试时不需要重置记忆，因为它需要接续训练集的末尾状态
+    # 评估时保持记忆连续性
+    # 不重置 memory 状态，因为测试是基于训练后的状态进行的
     total_correct = 0
-    for batch in data.to_sequential_batches(BATCH_SIZE):
+    for i in range(0, data.num_events, BATCH_SIZE):
+        batch = data[i: i + BATCH_SIZE].to(DEVICE)
         n_id = torch.cat([batch.src, batch.dst]).unique()
-        h, _ = model.memory(n_id)
-        out = model.classifier(h[batch.dst])
-        total_correct += int((out.argmax(dim=-1) == batch.y).sum())
-        # 测试时也要更新记忆，以保证时序连续
+
+        # 同样需要 detach 防止推理时内存累积
+        model.memory.detach()
+
+        out = model(n_id)
+        node_to_idx = {node.item(): i for i, node in enumerate(n_id)}
+        batch_dst_idx = torch.tensor([node_to_idx[d.item()] for d in batch.dst], device=DEVICE)
+
+        total_correct += int((out[batch_dst_idx].argmax(dim=-1) == batch.y).sum())
         model.memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
+
     return total_correct / data.num_events
 
 
-# ================= 4. 主循环 =================
-print(f"开始训练，设备: {DEVICE}...")
+# ================= 4. 运行 =================
 for epoch in range(1, EPOCHS + 1):
     loss = train()
-    val_acc = test(val_data)
+    val_acc = evaluate(val_data)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val Acc: {val_acc:.4f}')
 
-test_acc = test(test_data)
-print(f'最终测试集准确率: {test_acc:.4f}')
+if test_data:
+    test_acc = evaluate(test_data)
+    print(f'最终测试集准确率: {test_acc:.4f}')
 
-# 保存模型
-torch.save(model.state_dict(), "tgn_strategy_model.pt")
-print("模型已保存为 tgn_strategy_model.pt")
+torch.save(model.state_dict(), "tgn_model.pt")
+print("训练完成，模型已保存。")
