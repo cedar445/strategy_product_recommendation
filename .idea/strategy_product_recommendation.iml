@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/csv" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W34" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W35" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W36" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W37" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W38" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W39" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W40" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W41" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W42" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W43" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W44" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W45" />
+      <excludeFolder url="file://$MODULE_DIR$/data/trainData/weeklyPart1/2025W46" />
+    </content>
     <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
